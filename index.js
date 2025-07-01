@@ -15,7 +15,7 @@ const users = [
 ];
 
 
-const typeDefs = /* GraphQL */ `
+const typeDefs = `
   type User {
     id: ID!
     name: String!
@@ -31,6 +31,7 @@ const typeDefs = /* GraphQL */ `
   type Mutation {
     addUser(name: String!, email: String!): User!
     delUser(id: Int!): Boolean!
+    updateUser(id: Int!, name: String, email: String): User
   }
 `
 
@@ -38,7 +39,7 @@ const resolvers = {
   Query: {
     hello: () => 'Hej!',
     world: () => ['s', 'w', 'i', 'a', 't'],
-    allUsers: () => users
+    allUsers: () => users,
   },
 
   Mutation : {
@@ -58,6 +59,16 @@ const resolvers = {
         return true;
       }
       return false;
+    },
+    updateUser: (_, {id, name, email}) => {
+      const userToUpdate = users.find(user => user.id == id);
+      if(userToUpdate == null) {
+        return null;
+      }
+      console.log(name, email)
+      userToUpdate.name = name ?? userToUpdate.name;
+      userToUpdate.email = email ?? userToUpdate.email;
+      return userToUpdate;
     }
   }
 }
@@ -70,5 +81,5 @@ const yoga = createYoga({
 })
 
 createServer(yoga).listen(4000, () => {
-  console.log('✅ Serwer działa na http://localhost:4000/graphql')
+  console.log('Serwer http://localhost:4000/graphql')
 })
